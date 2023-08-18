@@ -1,7 +1,6 @@
 from ..base import BaseNetwork
 
 from fastapi import HTTPException
-from bs4 import BeautifulSoup
 import json
 from .parser import meal_parser
 
@@ -17,7 +16,7 @@ class MealRequest(BaseNetwork):
         super().__init__()
         self.token = token
 
-    async def searchMeal(self, YMD: str, schoolCode: str, local: str) -> List[dict]:
+    async def searchMeal(self, YMD: str, schoolCode: str, local: str) -> dict:
         # url = f"https://b2c-api-cdn.deeplol.gg/summoner/summoner?summoner_name={name}&platform_id=KR"
         # data, status = await self.httpGetRequests(url)
         # if status == 404:
@@ -48,6 +47,9 @@ class MealRequest(BaseNetwork):
                     "time": timeCovert(i["MMEAL_SC_CODE"])
                 })
                 del null[null.index(i["MMEAL_SC_CODE"])]
+            isReuslt = True
+        else:
+            isReuslt = False
         for i in null:
             result.append({
                 "menu": "존재하지 않습니다.",
@@ -55,7 +57,8 @@ class MealRequest(BaseNetwork):
                 "calorie": "0 Kcal",
                 "time": timeCovert(i)
             })
-        return result
+        
+        return {"data" : result, "success": isReuslt}
     async def searchSchool(self, local: str, schoolName: str) -> List[dict]:
         url = f"https://open.neis.go.kr/hub/schoolInfo/?key={self.token}"+ "&Type=Json"+ f"&ATPT_OFCDC_SC_CODE={local}" + f"&SCHUL_NM={schoolName}"
         data, status = await self.httpGetRequests(url)
@@ -64,7 +67,7 @@ class MealRequest(BaseNetwork):
 
         if data.get("RESULT"):
             print(data)
-            return HTTPException(404, detail="not found school")
+            raise HTTPException(404, detail="not found school")
         result = []
         for i in data["schoolInfo"][1]["row"]:
             result.append({

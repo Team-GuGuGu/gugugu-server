@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 from api.main import router as api_router
 from api.meal.usecase import MealUseCase
 from db import init_db, get_session
-from async_fastapi_jwt_auth.exceptions import AuthJWTException
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from dotenv import load_dotenv
 import asyncio
@@ -38,13 +37,6 @@ async def on_start():
 async def health() -> JSONResponse:
     return JSONResponse({"message": "It worked!!"})
 
-@app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.message}
-    )
-
 @app.exception_handler(TokenException)
 async def token_exception_handler(request: Request, exc: TokenException):
     return JSONResponse(    
@@ -63,4 +55,4 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=7777, reload=True, log_level="info")
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")

@@ -11,8 +11,9 @@ class MealUseCase:
         self.async_session= session
     async def readBySchool(self, local: str, date: str, school: str) -> MealTable | bool:
         async with self.async_session() as session:
-            _query = select(MealTable).filter(MealTable.local == local and MealTable.date == date and MealTable.school == MealTable.school)
-            _result = (await session.execute(_query)).scalars().first()
+            _query = select(MealTable).filter(MealTable.local == local, MealTable.date == date, MealTable.school == MealTable.school)
+            _result = (await session.execute(_query)).scalars().all()
+            print(_result)
             if not _result:
                 return False
             return _result

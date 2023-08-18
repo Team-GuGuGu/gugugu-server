@@ -27,7 +27,8 @@ async def getMeal(
         date=date,
         school=schoolCode
     )
-    if not result is False:
+    if result != False:
+        result = result[0]
         return baseResponse(
             data=json.loads(result.meal.encode().decode())
         )
@@ -37,9 +38,9 @@ async def getMeal(
         local=local
     )
     #기록
-    
-    await usecase.create(local=local, date=date, school=schoolCode, meal=data)
-    return baseResponse(data=data)
+    if data["success"] is True:
+        await usecase.create(local=local, date=date, school=schoolCode, meal=data["data"])
+    return baseResponse(data=data["data"])
 @router.get("/school")
 async def getSchool(
     request: Request,
