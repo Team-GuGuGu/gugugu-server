@@ -19,6 +19,8 @@ async def getMeal(
     schoolCode: str,
     session: AsyncSession = Depends(get_session)
 ):
+    get_session()
+    print(type(session))
     usecase = MealUseCase(session)
     result = await usecase.readBySchool(
         local=local,
@@ -27,7 +29,7 @@ async def getMeal(
     )
     if not result is False:
         return baseResponse(
-            data=json.loads(result.meal)
+            data=json.loads(result.meal.encode().decode())
         )
     data = await network.searchMeal(
         YMD=date,

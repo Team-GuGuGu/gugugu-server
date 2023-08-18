@@ -8,7 +8,7 @@ import json
 
 class MealUseCase:
     def __init__(self, session: AsyncSession) -> None:
-        self.async_session = session
+        self.async_session= session
     async def readBySchool(self, local: str, date: str, school: str) -> MealTable | bool:
         async with self.async_session() as session:
             _query = select(MealTable).filter(MealTable.local == local and MealTable.date == date and MealTable.school == MealTable.school)
@@ -25,4 +25,12 @@ class MealUseCase:
             except:
                 raise HTTPException(404, detail="what happend..?")
             return True
+    async def clear(self):
+        async with self.async_session() as session:
+            await session.execute(MealTable.__table__.delete())
+            await session.commit()
+            # _table = (await session.execute(select(MealTable)).scalars().first())
+            # if _table:
+            #     await session.delete(_table)
+            #     await session.commit()
 
