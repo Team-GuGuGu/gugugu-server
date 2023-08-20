@@ -45,10 +45,9 @@ async def getMeal(
 async def getSchool(
     request: Request,
     schoolName: str,
-    local: str,
     session: AsyncSession = Depends(get_session)
 ):
-    data = await network.searchSchool(local=local, schoolName=schoolName)
+    data = await network.searchSchool(schoolName=schoolName)
     return baseResponse(data=data)
     ""
 

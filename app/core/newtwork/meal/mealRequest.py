@@ -59,8 +59,8 @@ class MealRequest(BaseNetwork):
             })
         
         return {"data" : result, "success": isReuslt}
-    async def searchSchool(self, local: str, schoolName: str) -> List[dict]:
-        url = f"https://open.neis.go.kr/hub/schoolInfo/?key={self.token}"+ "&Type=Json"+ f"&ATPT_OFCDC_SC_CODE={local}" + f"&SCHUL_NM={schoolName}"
+    async def searchSchool(self, schoolName: str) -> List[dict]:
+        url = f"https://open.neis.go.kr/hub/schoolInfo/?key={self.token}"+ "&Type=Json"+ f"&SCHUL_NM={schoolName}"
         data, status = await self.httpGetRequests(url)
         if type(data) is str:
             data = json.loads(data)
@@ -72,6 +72,7 @@ class MealRequest(BaseNetwork):
         for i in data["schoolInfo"][1]["row"]:
             result.append({
                 "schoolCode": i["SD_SCHUL_CODE"],
-                "schoolName": i["SCHUL_NM"]
+                "schoolName": i["SCHUL_NM"],
+                "local": i["ATPT_OFCDC_SC_CODE"]
             })
         return result
