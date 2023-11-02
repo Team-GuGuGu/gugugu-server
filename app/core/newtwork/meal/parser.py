@@ -16,7 +16,7 @@ def meal_edit(menu: str):
         allergy.append(match)
     
     text = regex.sub('', menu).strip()
-    text = text.split("<br/>")
+    text = text.replace("<br/>", "\n")
     
     return (text, allergy)
 
